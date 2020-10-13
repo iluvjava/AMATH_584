@@ -1,0 +1,13 @@
+function Fxout = PlotDoubleArray(arr, size, title)
+% This function plots an array into an gray scale image. 
+% size:
+%   2d array representing the size of the matrix
+% tittle: 
+%   String that is going to be the tile of the plot 
+% 
+% 
+   figure;
+   arr = arr - min(arr);
+   Scale = 255/max(arr);
+   imshow(uint8(reshape(arr*Scale, arr)));
+end
