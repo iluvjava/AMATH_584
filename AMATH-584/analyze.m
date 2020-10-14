@@ -39,7 +39,7 @@ TotalAverage = (ColumnDataMatrix*ones(NumberofImages, 1))/NumberofImages;
 figure; image(reshape(TotalAverage, [ImageSize(1) ImageSize(2)]));
 title("Your Average Matrix Creepy Face");
 
-[U, S, V] = svd(ColumnDataMatrix - TotalAverage, 'econ');
+[U, S, V] = svd(ColumnDataMatrix - TotalAverage, 'econ');  % SVD on Variance Matrix! 
 
 %% Look at the singular values 
 
@@ -98,14 +98,17 @@ end
 
 % Instead of plotting it, I am going to visualize this numerically to 
 % See the errors for low rank approximation. 
+% Technique: Variance Analysis.
 
-
-
-
-
-
-
-
+RANKS = 1:10:length(TRAINING_SET);
+VarianceUnexplained = zeros(length(RANKS));
+TotalVariance = (ColumnDataMatrix - TotalAverage);
+TotalVariance = ...
+    reshape(A, [1, size(TotalVariance, 1)*size(TotalVariance, 2)])
+TotalVariance = var(TotalVariance); 
+for R = Ranks
+    
+end
 
 
 

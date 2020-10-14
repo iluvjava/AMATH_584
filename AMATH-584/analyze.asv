@@ -39,7 +39,7 @@ TotalAverage = (ColumnDataMatrix*ones(NumberofImages, 1))/NumberofImages;
 figure; image(reshape(TotalAverage, [ImageSize(1) ImageSize(2)]));
 title("Your Average Matrix Creepy Face");
 
-[U, S, V] = svd(ColumnDataMatrix - TotalAverage, 'econ');
+[U, S, V] = svd(ColumnDataMatrix - TotalAverage, 'econ');  % SVD on Variance Matrix! 
 
 %% Look at the singular values 
 
@@ -73,31 +73,40 @@ end
 %% reconstructions For Known Faces 
 % define good constants: 
 NUMBER_OF_RANDOM_FACES = 3;
-RECONSTRUCTION_RANK = 200
+RECONSTRUCTION_RANK = 10;
 
 % Reconstruct for faces inside of the known data set. 
-U_tild = U(:, 1: RECONSTRUCTION_RANK);
-S_tild = S(:, 1: RECONSTRUCTION_RANK); 
-V_tild = V(:, 1: RECONSTRUCTION_RANK);  % Careful about here, because USV^T
+U_tild = U;
+S_tild = S;
+S_tild(RECONSTRUCTION_RANK + 1: end, :) = 0; 
+V_tild = V;  % Careful about here, because USV^T
+A_tild = U_tild*S_tild*V_tild.';
+A_tild = A_tild + TotalAverage;
+
 RandomFaces = ...
-    randi([0 size(ColumnDataMatrix, 2)], 1, NUMBER_OF_RANDOM_FACES); 
-RandomFaces = ColumnDataMatrix(:, RandomFaces);
+    randi([1 size(ColumnDataMatrix, 2)], NUMBER_OF_RANDOM_FACES, 1); 
 figure;
 for I = 1: NUMBER_OF_RANDOM_FACES
     FaceID  = RandomFaces(I);
-    TheFace = RandomFaces(FaceID);
-    TheFace = ColumnDataMatrix(:, TheFace); 
+    TheFace = ColumnDataMatrix(:, FaceID); 
     subplot(2, NUMBER_OF_RANDOM_FACES, I);
-    imshow(ArrayToGrayScale(TheFace, ImageSize))
-    ToReconstruct = V_tild(:, FaceID);
-    ToReconstruct = U_tild*S_tild*ToReconstruct.'
-    
+    imshow(ArrayToGrayScale(TheFace, ImageSize));
+    TheFaceReconstruct = A_tild(:, FaceID);
+    subplot(2, NUMBER_OF_RANDOM_FACES, NUMBER_OF_RANDOM_FACES + I);
+    imshow(ArrayToGrayScale(TheFaceReconstruct, ImageSize));
 end
 
+% Instead of plotting it, I am going to visualize this numerically to 
+% See the errors for low rank approximation. 
+% Technique: Variance Analysis.
 
-
-
-
+RANKS = 1:10:length(TRAINING_SET);
+VarianceUnexplained = zeros(length(RANKS));
+TotalVariance = (ColumnDataMatrix - TotalAverage);
+TotalVariance = reshape()
+for R = Ranks
+    
+end
 
 
 
