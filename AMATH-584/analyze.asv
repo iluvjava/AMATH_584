@@ -95,17 +95,24 @@ for I = 1: NUMBER_OF_RANDOM_FACES
     subplot(2, NUMBER_OF_RANDOM_FACES, NUMBER_OF_RANDOM_FACES + I);
     imshow(ArrayToGrayScale(TheFaceReconstruct, ImageSize));
 end
-
+%% Variance Analysis
 % Instead of plotting it, I am going to visualize this numerically to 
 % See the errors for low rank approximation. 
 % Technique: Variance Analysis.
 
-RANKS = 1:10:length(TRAINING_SET);
+RANKS = 1:1000:size(S, 1);
 VarianceUnexplained = zeros(length(RANKS));
 TotalVariance = (ColumnDataMatrix - TotalAverage);
-TotalVariance = reshape()
-for R = Ranks
-    
+TotalVariance = ...
+    reshape(ColumnDataMatrix, [1, size(TotalVariance, 1)*size(TotalVariance, 2)]);
+TotalVariance = var(TotalVariance); 
+
+Variances = [];
+for R = RANKS
+    A_tilde = RankReduce(U, S, V, R);
+    A_tilde = reshape(A_tilde, [1, size(A_tilde, 1)*size(A_tilde, 2)]);
+    VarianceExplained = var(A_tilde);
+    Variances(end + 1) = VarianceExplained/TotalVariance;
 end
 
 

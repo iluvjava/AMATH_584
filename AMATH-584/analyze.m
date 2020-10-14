@@ -1,16 +1,19 @@
 clear all; close all; clc; 
 
-% Get files
-dirinfo = dir("yale-faces\yalefaces_cropped\CroppedYale\**");
-dirinfo([dirinfo.isdir]) = [];
+%% Get files
+% dirinfo = dir("yale-faces\yalefaces_cropped\CroppedYale\**");
+% dirinfo([dirinfo.isdir]) = [];
 
-% Meta Setting
+dirinfo = dir("yale-faces\yalefaces_uncropped\subject*.*");
+
+%% Meta Setting, create matrix
 TRAINING_SET = 1: length(dirinfo);
 
 % Get Matrices 
 Matrices = cell(1, length(TRAINING_SET));
 for I = TRAINING_SET
-    TheImage = imread(strcat(dirinfo(I).folder, "\", dirinfo(I).name), "pgm");
+    % TheImage = imread(strcat(dirinfo(I).folder, "\", dirinfo(I).name), "pgm");
+    TheImage = imread(strcat(dirinfo(I).folder, "\", dirinfo(I).name));
     ImageSize = size(TheImage);
     Matrices{I} = TheImage;
 end
@@ -30,13 +33,12 @@ clearvars -except ColumnDataMatrix ImageSize;
 
 %% 
 % Time for Maths. 
-hold on;
 
 ImageTotalDataPoints = size(ColumnDataMatrix, 1);
 NumberofImages = size(ColumnDataMatrix, 2);
 TotalAverage = (ColumnDataMatrix*ones(NumberofImages, 1))/NumberofImages;
 
-figure; image(reshape(TotalAverage, [ImageSize(1) ImageSize(2)]));
+figure; hold on; image(reshape(TotalAverage, [ImageSize(1) ImageSize(2)]));
 title("Your Average Matrix Creepy Face");
 
 [U, S, V] = svd(ColumnDataMatrix - TotalAverage, 'econ');  % SVD on Variance Matrix! 
@@ -51,29 +53,23 @@ ylabel("Log(\sigma_i)")
 
 subplot(2, 1, 2);
 SingularVals = log(diag(S));
-plot(1:200, SingularVals(1:200), '-o');
+plot(1:100, SingularVals(1:100), '-o');
 title("the first 200 Singular values");
 ylabel("Log(\sigma_i)")
 
-
-
 %% Look at the Basis in U
-
 figure;
-title("Basis in U");
-
+title("first 16 Basis in U (EigenFaces)");
 for I = 1:16
    subplot(4, 4, I);
    ImgArr = U(:, I);
    imshow(ArrayToGrayScale(ImgArr, ImageSize));
 end
 
-
-
 %% reconstructions For Known Faces 
 % define good constants: 
 NUMBER_OF_RANDOM_FACES = 3;
-RECONSTRUCTION_RANK = 10;
+RECONSTRUCTION_RANK = 200;
 
 % Reconstruct for faces inside of the known data set. 
 U_tild = U;
@@ -95,20 +91,29 @@ for I = 1: NUMBER_OF_RANDOM_FACES
     subplot(2, NUMBER_OF_RANDOM_FACES, NUMBER_OF_RANDOM_FACES + I);
     imshow(ArrayToGrayScale(TheFaceReconstruct, ImageSize));
 end
-
+%% Variance Analysis
 % Instead of plotting it, I am going to visualize this numerically to 
 % See the errors for low rank approximation. 
 % Technique: Variance Analysis.
 
-RANKS = 1:10:length(TRAINING_SET);
+RANKS = 1:10:min(size(ColumnDataMatrix, 2), 200);
 VarianceUnexplained = zeros(length(RANKS));
 TotalVariance = (ColumnDataMatrix - TotalAverage);
 TotalVariance = ...
-    reshape(A, [1, size(TotalVariance, 1)*size(TotalVariance, 2)])
+    reshape(TotalVariance, [1, size(TotalVariance, 1)*size(TotalVariance, 2)]);
 TotalVariance = var(TotalVariance); 
-for R = Ranks
-    
+
+Variances = [];
+for R = RANKS  % This part can be made faster with dynamic programming, but whatever.
+    A_tilde = RankReduce(U, S, V, R);
+    A_tilde = reshape(A_tilde, [1, size(A_tilde, 1)*size(A_tilde, 2)]);
+    VarianceExplained = var(A_tilde);
+    Variances(end + 1) = VarianceExplained/TotalVariance;
 end
+figure;
+plot(RANKS, Variances, "-x");
+title("Ranks and Explained Variances");
+disp("The threshold of ranks that gives above 95% explain variance is approximately: r = 71");
 
 
 
