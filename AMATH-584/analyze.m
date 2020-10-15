@@ -1,10 +1,10 @@
 clear all; close all; clc; 
 
 %% Get files
-% dirinfo = dir("yale-faces\yalefaces_cropped\CroppedYale\**");
-% dirinfo([dirinfo.isdir]) = [];
+dirinfo = dir("yale-faces\yalefaces_cropped\CroppedYale\**");
+dirinfo([dirinfo.isdir]) = [];
 
-dirinfo = dir("yale-faces\yalefaces_uncropped\subject*.*");
+% dirinfo = dir("yale-faces\yalefaces_uncropped\subject*.*");
 
 %% Meta Setting, create matrix
 TRAINING_SET = 1: length(dirinfo);
@@ -54,8 +54,10 @@ ylabel("Log(\sigma_i)")
 subplot(2, 1, 2);
 SingularVals = log(diag(S));
 plot(1:100, SingularVals(1:100), '-o');
-title("the first 200 Singular values");
+title("the first 100 Singular values");
 ylabel("Log(\sigma_i)")
+
+saveas(gcf, "Singular_Value_Distribution.png");
 
 %% Look at the Basis in U
 figure;
@@ -65,6 +67,8 @@ for I = 1:16
    ImgArr = U(:, I);
    imshow(ArrayToGrayScale(ImgArr, ImageSize));
 end
+
+saveas(gcf, "EigenFaces.png")
 
 %% reconstructions For Known Faces 
 % define good constants: 
@@ -91,6 +95,7 @@ for I = 1: NUMBER_OF_RANDOM_FACES
     subplot(2, NUMBER_OF_RANDOM_FACES, NUMBER_OF_RANDOM_FACES + I);
     imshow(ArrayToGrayScale(TheFaceReconstruct, ImageSize));
 end
+
 %% Variance Analysis
 % Instead of plotting it, I am going to visualize this numerically to 
 % See the errors for low rank approximation. 
@@ -113,8 +118,9 @@ end
 figure;
 plot(RANKS, Variances, "-x");
 title("Ranks and Explained Variances");
-disp("The threshold of ranks that gives above 95% explain variance is approximately: r = 71");
-
+ylabel("Explained Variance");
+xlabel("Number of Singular Values used"); 
+saveas(gcf, "ExplainedVariance.png");
 
 
 

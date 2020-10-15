@@ -10,7 +10,6 @@ function Fxnout = ForwardEuler(f, y0, dt)
 %       The y values for each time series queried by dt, including the zero
 %       for the initial condition, it should be monotone increasing 
 %       sequences of time frames. 
-
     Fvalues = zeros(1, length(dt));
     Fvalues(1) = y0;
     for I = 2:length(dt)
