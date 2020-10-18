@@ -43,7 +43,7 @@ title("Your Average Matrix Creepy Face");
 
 [U, S, V] = svd(ColumnDataMatrix - TotalAverage, 'econ');  % SVD on Variance Matrix! 
 
-%% Look at the singular values 
+%% PLOTING THE SINGULAR VALUES RELATED STUFF. 
 
 figure;
 subplot(2, 1, 1);
@@ -56,10 +56,19 @@ SingularVals = log(diag(S));
 plot(1:100, SingularVals(1:100), '-o');
 title("the first 100 Singular values");
 ylabel("Log(\sigma_i)")
-
 saveas(gcf, "Singular_Value_Distribution.png");
 
-%% Look at the Basis in U
+figure;
+histogram(diag(S));
+title("Histogram of Singular Value");
+saveas(gcf, "Singular_Value_Histogram.png");
+
+figure; 
+histogram(log(diag(S)));
+title("Histogram of $$\log{\sigma_i}$$", 'Interpreter','latex');
+saveas(gcf, "Singular_Value_logrithm_histogram.png");
+
+%% LOOKING A EIGEN FACES AND PLOTING IT OUT. 
 figure;
 title("first 16 Basis in U (EigenFaces)");
 for I = 1:16
@@ -70,61 +79,57 @@ end
 
 saveas(gcf, "EigenFaces.png")
 
-%% reconstructions For Known Faces 
-% define good constants: 
-NUMBER_OF_RANDOM_FACES = 3;
-RECONSTRUCTION_RANK = 200;
-
-% Reconstruct for faces inside of the known data set. 
-U_tild = U;
-S_tild = S;
-S_tild(RECONSTRUCTION_RANK + 1: end, :) = 0; 
-V_tild = V;  % Careful about here, because USV^T
-A_tild = U_tild*S_tild*V_tild.';
-A_tild = A_tild + TotalAverage;
-
-RandomFaces = ...
-    randi([1 size(ColumnDataMatrix, 2)], NUMBER_OF_RANDOM_FACES, 1); 
-figure;
-for I = 1: NUMBER_OF_RANDOM_FACES
-    FaceID  = RandomFaces(I);
-    TheFace = ColumnDataMatrix(:, FaceID); 
-    subplot(2, NUMBER_OF_RANDOM_FACES, I);
-    imshow(ArrayToGrayScale(TheFace, ImageSize));
-    TheFaceReconstruct = A_tild(:, FaceID);
-    subplot(2, NUMBER_OF_RANDOM_FACES, NUMBER_OF_RANDOM_FACES + I);
-    imshow(ArrayToGrayScale(TheFaceReconstruct, ImageSize));
-end
-
-%% Variance Analysis
+%% Variance Analysis 
+% COMPUTATIONALLY HEAVY
 % Instead of plotting it, I am going to visualize this numerically to 
 % See the errors for low rank approximation. 
 % Technique: Variance Analysis.
 
-RANKS = 1:10:min(size(ColumnDataMatrix, 2), 200);
-VarianceUnexplained = zeros(length(RANKS));
-TotalVariance = (ColumnDataMatrix - TotalAverage);
-TotalVariance = ...
-    reshape(TotalVariance, [1, size(TotalVariance, 1)*size(TotalVariance, 2)]);
-TotalVariance = var(TotalVariance); 
+[Bestrank1, CulmulativeVariance] = ... 
+    VarianceAnalysis(U, S, V, ColumnDataMatrix - TotalAverage, 0.95);
 
-Variances = [];
-for R = RANKS  % This part can be made faster with dynamic programming, but whatever.
-    A_tilde = RankReduce(U, S, V, R);
-    A_tilde = reshape(A_tilde, [1, size(A_tilde, 1)*size(A_tilde, 2)]);
-    VarianceExplained = var(A_tilde);
-    Variances(end + 1) = VarianceExplained/TotalVariance;
-end
+%% VARIANCE ANALYSIS AND PLOTING.
 figure;
-plot(RANKS, Variances, "-x");
-title("Ranks and Explained Variances");
-ylabel("Explained Variance");
-xlabel("Number of Singular Values used"); 
-saveas(gcf, "ExplainedVariance.png");
+plot(CulmulativeVariance, "ko");
+ylabel("Explained Squared Variance");
+title("Variance Analysis");
+xline(Bestrank1);
+saveas(gcf, "Rank and Explained Squared Variance.png");
 
 
 
+%% Energy Analysis AND PLOTING.
+% Another way of determing the rank of the matrix is to use the idea of
+% energy, see code 1.19 in the data book for more details.
+Bestrank2 = EnergyAnalysis(S);
+saveas(gcf, "Energy Analysis.png");
 
 
+%% Reconstruction of Known Faces 
+% Using the new gotten ranks for reconstructing a certain column in the
+% original matrix. 
+ReconstrctRandomFaces... 
+    (ColumnDataMatrix, U, S, V, Bestrank1, ImageSize, TotalAverage);
+saveas(gcf, "Random Faces Reconstruction using Variance Analysis.png");
 
+ReconstrctRandomFaces... 
+    (ColumnDataMatrix, U, S, V, Bestrank2, ImageSize, TotalAverage);
+saveas(gcf, "Random Faces Reconstruction using Energy Analysis.png")
 
+function ReconstrctRandomFaces(dataMatrix, U, S, V, rank, ImageSize, TotalAverage)
+    NUMBER_OF_RANDOM_FACES = 3;
+    RandomFaces = ...
+    randi([1 size(dataMatrix, 2)], NUMBER_OF_RANDOM_FACES, 1);
+    [A_tilde, U_tilde, S_tilde, V_tilde] = RankReduce(U, S, V, rank);
+    figure;
+    for I = 1: NUMBER_OF_RANDOM_FACES
+        FaceID  = RandomFaces(I);
+        TheFace = dataMatrix(:, FaceID); 
+        subplot(2, NUMBER_OF_RANDOM_FACES, I); 
+        imshow(ArrayToGrayScale(TheFace, ImageSize));
+        TheFaceReconstruct = A_tilde(:, FaceID);
+        subplot(2, NUMBER_OF_RANDOM_FACES, NUMBER_OF_RANDOM_FACES + I); 
+        imshow(ArrayToGrayScale(TheFaceReconstruct + TotalAverage, ImageSize));
+    end
+    sgtitle(["Reconstruct Random Faces using a rank of: ", num2str(rank)]);
+end

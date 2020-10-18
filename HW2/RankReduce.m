@@ -1,4 +1,5 @@
-function [A_tilde] = RankReduce(U, S, V, r)
+function [A_tilde, U_tilde, S_tilde, V_tilde]... 
+    = RankReduce(U, S, V, r)
 %  The function does a rank reduction on the SVD matrices of a given matrix.
 %  
 %  U, S, V:
