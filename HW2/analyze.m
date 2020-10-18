@@ -103,7 +103,8 @@ saveas(gcf, "Rank and Explained Squared Variance.png");
 % energy, see code 1.19 in the data book for more details.
 Bestrank2 = EnergyAnalysis(S);
 saveas(gcf, "Energy Analysis.png");
-
+Bestrank90 = EnergyAnalysis(S, 0.9);
+Bestrank99 = EnergyAnalysis(S, 0.99);
 
 %% Reconstruction of Known Faces 
 % Using the new gotten ranks for reconstructing a certain column in the
