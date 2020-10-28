@@ -3,8 +3,9 @@ function [ReconstructionError, OrthogonalityError] = ...
     %% For a given matrix and a given scheme, get the Reconstruction Error 
     % and the Orthogonality Error. 
     [m, n] = size(matrix);
+    disp(strcat("Working on a ", num2str(m), " by ", num2str(n))); 
     [Q, R] = scheme(matrix); 
-    ReconstructionError = Q
-    
-    
+    ReconstructionError = norm(Q*R - matrix)/(m*n);
+    disp(strcat("Reconstruction Error: ", num))
+    OrthogonalityError  = norm(Q'*Q - eye(n))/(size(Q, 2)^2);
 end

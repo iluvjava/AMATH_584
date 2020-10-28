@@ -15,8 +15,9 @@ function [Q,R] = qrfactor(A)
         for j = 1:m
             Q(k:m,j) = Q(k:m,j) - v*( 2*(v'*Q(k:m,j)) );
         end
+    end
+    Q = Q';
+    R = triu(A);  % exact triangularity
         
 end
 
-Q = Q';
-R = triu(A);  % exact triangularity

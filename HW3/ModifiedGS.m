@@ -3,12 +3,17 @@ function [Q, R] = ModifiedGS(A)
     % the matrix, using the Modified Gram Schimtz process. 
     [m, n] = size(A);
     Q = A;  % Copy
-    for I = 1: n
+    Q(:, 1) = Q(:, 1)/norm(Q(:, 1));
+    for I = 2: n
+        q = Q(:, I - 1);
+        if norm(Q) < 1e-15
+           error("Rank Deficit matrix can't use Modified GS. ") ;
+        end
+        P = q*q'; 
+        V =  Q(:, I: end);
+        Q(:, I: end) = V - P*V;
         q = Q(:, I);
-        q = q/norm(q);
-        Q(:, I) = q;
-        P = q*q.';
-        Q(:, I + 1: end) = Q(:, I + 1: end) - P*Q(:, I + 1: end);
+        Q(:, I) = q/norm(q);
     end
-    R = Q.'*A;
+    R = triu(Q'*A);
 end
