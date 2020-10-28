@@ -1,0 +1,13 @@
+function output = BadPolynomial(x)
+    
+    Coefficients = ... 
+        [1, -18, 144, -627, 2016, -4032, 5376, -4608, 2304, -512]; 
+    
+    PowerAccumulate = ones(length(x), 1);
+    output = zeros(length(x), 1); 
+    for C = Coefficients
+        output = output + C*PowerAccumulate; 
+        PowerAccumulate = 
+    end
+end
+

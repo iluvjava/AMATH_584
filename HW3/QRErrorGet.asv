@@ -1,0 +1,10 @@
+function [ReconstructionError, OrthogonalityError] = ... 
+    CompareQR(matrix, scheme)
+    %% For a given matrix and a given scheme, get the Reconstruction Error 
+    % and the Orthogonality Error. 
+    [m, n] = size(matrix);
+    [Q, R] = scheme(matrix); 
+    ReconstructionError = Q
+    
+    
+end
