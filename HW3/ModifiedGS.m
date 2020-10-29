@@ -1,7 +1,7 @@
 function [Q, R] = ModifiedGS(A)
     % Given a matrix A, this function produces a reduced Gram Schitmz for
     % the matrix, using the Modified Gram Schimtz process. 
-    [m, n] = size(A);
+    [~, n] = size(A);
     Q = A;  % Copy
     Q(:, 1) = Q(:, 1)/norm(Q(:, 1));
     for I = 2: n
