@@ -5,7 +5,7 @@ function [EigenValues, EigenVectors, Lambda, EigenSpace]...
     % it will return all the eigenvelues during iterations, and all the
     % matching eigenvectors. 
     % Inputs: 
-    %   A: A matrix, Hermitian, with unique eigen values. 
+    %   A: A matrix, HERMITIAN!!!, with unique eigen values. 
     % Return: 
     %   EigenValues: 
     %       The I, J element is the the I th eigenvalue, after J th

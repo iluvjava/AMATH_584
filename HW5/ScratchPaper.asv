@@ -97,9 +97,7 @@ M = randn(10);
 [U, V] = eigs(M);
 v0 = U(:, 1) + randn(10, 1)*0.5;
 [EigenValues, EigenVectors, Flag] = OneShotRQItr(M, v0);
-% For guesses that are close, the method is likely to converge. 
-
-
+% For guesses that are c
 
 
 %% 

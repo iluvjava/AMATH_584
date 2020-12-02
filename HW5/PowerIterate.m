@@ -12,6 +12,8 @@ function [EigenValues, EigenVectors]= PowerIterate(A, n)
     %       
     %     If Matrix is not symmetric, it will initialize the vector with a
     %     complex numbers in it. 
+    % A: 
+    %   HERMITIAN with unique eigen values!!!! 
     
     [M, N] = size(A);
     if M ~= N
