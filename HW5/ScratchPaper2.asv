@@ -64,4 +64,16 @@ h = semilogy(1: r, SingularValuesActual(1: r), "bo");
 LegendNames{II + 1} = "Actual";
 legend(LegendNames);
 title("Randomized Modes Decay Differenr Ranks");
-saveas(gcf, "randomized-modes-decay", "png");
+saveas(gcf, "Randomized Modes ");
+
+%% Highest Rank Approximation
+
+
+
+
+
+
+
+
+
+

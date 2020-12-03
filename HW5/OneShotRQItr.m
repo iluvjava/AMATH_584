@@ -22,26 +22,31 @@ function [EigenValues, EigenVectors, Flag] = OneShotRQItr(A, v0, maxItr, tol, p)
     end
     
     import java.util.ArrayList;
+    
     v            = v0./norm(v0);
     l            = v'*A*v;
     I            = eye(size(A));
    
-    EigenValues  = ArrayList();
-    EigenVectors = ArrayList();
+    EigenValues  = [];
+    EigenVectors = zeros(size(A, 1), maxItr + 1);
     
-    EigenValues.add(l); 
-    EigenVectors.add(v);
+    EigenValues(maxItr + 1)  = l; 
+    EigenVectors(:, maxItr + 1) = v;
     
     for II = 1: maxItr
        w = (A - l.*I)\v;
        w = (I - p*p')*w;  % subspace removal. 
        v = w./norm(w);
        l = v'*A*v;
-       EigenValues.add(l);
-       EigenVectors.add(v);
-       if norm(RayleighQ(v)) < tol
+       EigenValues(maxItr - II + 1)  = l;
+       EigenVectors(:, maxItr - II + 1) = v;
+       RQ = norm(RayleighQ(v));
+       disp(strcat("RQ: ", num2str(RQ)));
+       if RQ < tol
            disp("Oneshot Inverse RQ Iterations converged to TOL. "); 
            Flag = 0;
+           EigenValues  = EigenValues(end - II: end);
+           EigenVectors = EigenVectors(:, end - II: end);
            return;
        end
     end
@@ -49,7 +54,7 @@ function [EigenValues, EigenVectors, Flag] = OneShotRQItr(A, v0, maxItr, tol, p)
     
     Flag = 1;
     function R = RayleighQ(x)
-        R = (A*x - (x'*A*x)*x);
+        R = A*x - (x'*A*x)*x;
     end
     
 end

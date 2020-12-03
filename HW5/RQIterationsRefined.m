@@ -13,18 +13,50 @@ function [EigenValues, EigenVectors] = RQIterationsRefined(A)
         error("Must be a square matrix");
     end
     
-    EigenValues  = zeros(M, n);      
-    EigenVectors = zeros(M, M, n);
-    P            = zeros(M, M);      % Found Eigen Vectors Matrix, orthogonal
-    V            = RandomGuess();    % Guessed Eigenvector. 
+    Tol    = 1e-6; 
+    MaxItr = 200;
+    
+    EigenValues  = cell(M, 1); 
+    EigenVectors = cell(M, 1);
+    P            = zeros(M, M);    % Found Eigen Vectors Matrix, orthogonal
+    V            = randn(M, 1) + 1i.*randn(M, 1);  % Guessed Eigenvector. 
     V            = V./norm(V);
-    Lambda       = V'*A*V;
     I            = eye(M);
     
+    for II = 1: M
+        [Lambdas, EigenVecs, Flag] = OneShotRQItr(A, V, MaxItr, Tol);
+        if Flag == 1
+           error("Not converging for some reasons.") 
+        else
+           disp("EigenVal, EigenVec subroutine successful. ");
+        end
+        
+        EigenVec = EigenVecs(:, 1);
+        Lambda   = Lambdas(1);
+        P(:, II) = (I - P*P')*EigenVec; % Augment our Eignespace. 
+        
+        EigenValues{II}  = Lambda;
+        EigenVectors{II} = EigenVec;
+        
+        R = RayLeighQuotientGradient(V);
+        
+        if R < Tol
+           break;  
+        end
+        V = RandomGuess();
+        V = V./norm(V);
+        
+    end
     
+    function v = RandomGuess()
+        v = randn(M, 1) + 1i.*randn(M, 1);
+        v = (I - P*P')*v;
+        v = v./norm(v);
+    end
     
-    
-    
-    
+    function R = RayLeighQuotientGradient(x)
+       R = A*x  - ((x'*A*x)/(x'*x)).*x;
+       R = norm(R);
+    end
     
 end
