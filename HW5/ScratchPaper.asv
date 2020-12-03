@@ -50,7 +50,7 @@ xlabel("Number of Iterations");
 ylabel("Log(Errors)");
 saveas(gcf, "rayleigh-itr-sym", "png");
 
-%% POWER ITERATIONS RANDOM NON-SYMMETRIC MATRICES. 
+%% POWER ITERATIONS RANDOM NON-SYM
 
 clear variables; clc;
 
@@ -75,13 +75,15 @@ xlabel("Iterations");
 legend("|v_i - v_{Truth}|", "|\lambda_1/\lambda_2|");
 saveas(gcf, "p-itr-nonsym", "png");
 
-%% RAYLEIGH QUOTIENT INVERSE POWER ITERATIONS FOR NON SYMMETRIC RANDOM MATRICES. 
+%% 
 clear variables; clc;
 A = randn(10);
 n = 20;
 [EigenValue, EigenVector, Lambda, EigenSpace] = RQuotientIteration(A, n);
 [U, V] = eigs(A, 10, "smallestabs");
 
+%% 
+% Plot, convergence of the eigen vectors. 
 figure;
 for II = 1: 10     % II th vector.
     Errors = zeros(1, n);
@@ -138,6 +140,12 @@ plot(real(EigenValues), imag(EigenValues), 'kx', "markersize", 12, "linewidth", 
 title("Reyleigh Q Smart Guesses");
 saveas(gcf, "p-itr-nonsym-smartguesses", "png");
 
+%% MORE INVESTIGATIONS
+% clear variables; clc; close all;
+% M      = randn(10); 
+% [U, V] = eigs(M, 10, "largestabs");
+% v0     = randn(10, 1) + 1i*randn(10, 1);
+% [EigenValues, EigenVectors] = RQIterationsRefined(M);
 
 %% 
 function M = RandomSymmetricMatrixNormal(n)

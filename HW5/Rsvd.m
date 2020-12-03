@@ -10,7 +10,7 @@ function [U, S, V] = Rsvd(A, k)
     % Stage A: 
     O = randn(n, k);
     Y = A*O; 
-    [Q, ~] = qr(Y, 0);  % significant subspace. 
+    [Q, ~] = qr(Y, 0);  % significant subspace, reduced QR. 
     
     % Stage B:
     B = Q'*A;

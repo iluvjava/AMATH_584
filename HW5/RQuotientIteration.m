@@ -1,6 +1,5 @@
 function [EigenValues, EigenVectors, Lambda, EigenSpace]... 
-    = RQuotientIteration(A, n)
-    % 
+          = RQuotientIteration(A, n)
     % It will iterate a fix number of time then it
     % it will return all the eigenvelues during iterations, and all the
     % matching eigenvectors. 

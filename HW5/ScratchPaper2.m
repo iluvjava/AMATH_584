@@ -39,7 +39,8 @@ M = ColumnDataMatrix*ColumnDataMatrix.';
 [EigenVectors, ~] = AutoPowerIterate(M);
 %% 
 DominantFace = ArrayToGrayScale(EigenVectors(:, end), ImageSize);
-imshow(DominantFace);
+imshow(DominantFace); title("power-it-eigenface");
+saveas(gcf, "Power-itr-faces", "png")
 
 %% randomized SVD 
 clc; 
