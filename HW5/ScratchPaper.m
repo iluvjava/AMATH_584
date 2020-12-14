@@ -1,6 +1,3 @@
-% Let's try to do HW4.
-
-
 %% POWER ITERATIONS WITH RANDOM SYMMETRIC MATRICES. 
 clear variables; clc;
 
@@ -99,9 +96,7 @@ xlabel("Number of Iterations");
 ylabel("Log(Errors)");
 saveas(gcf, "ray-itr-nonsym", "png");
 
-%% INTVESTIGATIONS! RANDOM GUESS
-% Here are are going explore a bit about the Rayleigh Quotients and their
-% convergence properties. 
+%% Random Initial Guesses
 clear variables; clc; close all;
 M      = randn(10); 
 [U, V] = eigs(M, 10, "largestabs");
@@ -120,7 +115,7 @@ xlabel("Re")
 ylabel("im")
 saveas(gcf, "p-itr-nonsym-randomguesses", "png");
 
-%% SMART GUESSES
+%% Smart Initial guesses 
 clear variables; clc; close all;
 M      = randn(10); 
 [U, V] = eigs(M, 10, "largestabs");
@@ -138,8 +133,7 @@ plot(real(EigenValues), imag(EigenValues), 'kx', "markersize", 12, "linewidth", 
 title("Reyleigh Q Smart Guesses");
 saveas(gcf, "p-itr-nonsym-smartguesses", "png");
 
-
-%% 
+% -------------------------------------------------------------------------
 function M = RandomSymmetricMatrixNormal(n)
     % I adhere to make a random Symmetric matrix that has elements normally
     % distributed, so we can have both positve and negative values. 

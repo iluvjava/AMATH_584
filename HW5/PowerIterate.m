@@ -29,10 +29,10 @@ function [EigenValues, EigenVectors]= PowerIterate(A, n)
     end
     v   = v./norm(v);
     for Itr = 1: n
-        w = A*v;
-        v = w./norm(w);
-        lambda = v'*A*v;
-        EigenValues(Itr) = lambda;
+        w                    = A*v;
+        v                    = w./norm(w);
+        lambda               = v'*A*v;
+        EigenValues(Itr)     = lambda;
         EigenVectors(:, Itr) = v;
         disp(strcat("Rayleigh Quotient: ", num2str(RayLeighQuotientGradient(v))));
     end

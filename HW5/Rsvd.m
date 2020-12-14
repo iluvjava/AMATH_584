@@ -4,6 +4,9 @@ function [U, S, V] = Rsvd(A, k)
     % going to be partial, but it's going to be fast. 
     %   k: rank of the significant features. 
     %   A: The super huge matrix that we don't have time to compute. 
+    % Returns: 
+    %   U as Q*U, yeah, already recovered 
+    %   S, V as the s, v for svd on Q^T A
     
     [m, n] = size(A);
     
